@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-
+from . import cnx
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
