@@ -1,1 +1,5 @@
-cmpe226-project2-online-education
+virtualenv virt
+source virt/bin/activate
+pip install -r requirments.txt
+
+python app.py
