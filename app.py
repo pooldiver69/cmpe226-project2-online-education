@@ -1,10 +1,11 @@
 from flask import Flask, request, render_template
 from routers.auth import auth
+from routers.course import course
 
 app = Flask(__name__)
 
 app.register_blueprint(auth)
-
+app.register_blueprint(course)
 @app.route('/')
 def hello():
     return render_template('index.html')
