@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template, make_response
 from . import cnx
 import hashlib
 
@@ -6,7 +6,11 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 __AUTH_SALT__ = "cmpe226"
 
-@auth.route("/signup", methods=['POST'])
+@auth.route('/student')
+def hello():
+    return render_template('auth.html')
+
+@auth.route("/student/signup", methods=['POST'])
 def signup():
     # print(request.form)
     if request.form['psw'] != request.form['psw-repeat']:
@@ -29,14 +33,17 @@ def signup():
                 "(s_name, user_id) "
                 "VALUES (%(s_name)s, %(user_id)s)")
     cursor.execute(create_student, {"s_name": request.form['name'], "user_id":  user_id})
-    print (cursor.lastrowid)
+    sid = cursor.lastrowid
     cnx.commit()
     cursor.close()
+    resp = make_response(render_template('index.html'))
+    resp.set_cookie('user_id', str(user_id))
+    resp.set_cookie('sid', str(sid))
+    resp.set_cookie('name', request.form['name'])
+    return resp
 
-    return "Signed up!"
 
-
-@auth.route("/signin", methods=['POST'])
+@auth.route("/student/signin", methods=['POST'])
 def signin():
     # print(request.form)
     hashed_psw = hashlib.md5((request.form['psw'] + __AUTH_SALT__).encode())
@@ -55,5 +62,8 @@ def signin():
     cursor.execute(query, {"user_id": r[0]}) 
     r = cursor.fetchone()     
     cursor.close()
-
-    return "welcome back, "+ r[1]
+    resp = make_response(render_template('index.html'))
+    resp.set_cookie('user_id', str(user_id))
+    resp.set_cookie('sid', str(r[0]))
+    resp.set_cookie('name', r[1])
+    return resp
