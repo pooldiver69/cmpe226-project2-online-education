@@ -136,14 +136,12 @@ body {
 
 <div class="row">
   <div class="main">
-    {% for row_index in range(courses |count) %}
+    {% for row_index in range(contents |count) %}
       <div>
-        <a href={{ courses[row_index]['c_url'] }}>
-          <h2>{{ courses[row_index]['c_name'] }}</h2>
+        <a href={{ contents[row_index]['content_url'] }}>
+          <h2>{{ contents[row_index]['title'] }}</h2>
         </a>
-          <h4>Instructor: {{ courses[row_index]['i_name'] }}</h4>
-          <h4>Subject: {{ courses[row_index]['subject'] }}</h4>
-          <p>{{ courses[row_index]['c_description'] }}</p>
+          <p>{{ contents[row_index]['con_description'] }}</p>
           <br>
       </div>
     {% endfor %} 

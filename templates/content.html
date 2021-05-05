@@ -136,17 +136,13 @@ body {
 
 <div class="row">
   <div class="main">
-    {% for row_index in range(courses |count) %}
-      <div>
-        <a href={{ courses[row_index]['c_url'] }}>
-          <h2>{{ courses[row_index]['c_name'] }}</h2>
-        </a>
-          <h4>Instructor: {{ courses[row_index]['i_name'] }}</h4>
-          <h4>Subject: {{ courses[row_index]['subject'] }}</h4>
-          <p>{{ courses[row_index]['c_description'] }}</p>
-          <br>
-      </div>
-    {% endfor %} 
+    <h2>{{ content['title'] }}</h2>
+    <p>{{ content['con_description'] }}</p>
+    <br>
+    <video width="1280" height="720" controls>
+      <source src={{ url_for('static', filename= content['stored_loc']) }} type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </div>
 
