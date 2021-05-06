@@ -6,11 +6,13 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 __AUTH_SALT__ = "cmpe226"
 
-@auth.route('/student')
+
+@auth.route('')
 def hello():
     return render_template('auth.html')
 
-@auth.route("/student/signup", methods=['POST'])
+
+@auth.route("/signup", methods=['POST'])
 def signup():
     # print(request.form)
     if request.form['psw'] != request.form['psw-repeat']:
@@ -25,25 +27,26 @@ def signup():
     cursor.close()
     cursor = cnx.cursor()
     create_auth = ("INSERT INTO auth "
-                "(email, pwd) "
-                "VALUES (%(email)s, %(pwd)s)")
-    cursor.execute(create_auth, {"email": request.form['email'], "pwd":  hashed_psw.hexdigest()})
+                   "(email, pwd) "
+                   "VALUES (%(email)s, %(pwd)s)")
+    cursor.execute(
+        create_auth, {"email": request.form['email'], "pwd":  hashed_psw.hexdigest()})
     user_id = cursor.lastrowid
     create_student = ("INSERT INTO student "
-                "(s_name, user_id) "
-                "VALUES (%(s_name)s, %(user_id)s)")
-    cursor.execute(create_student, {"s_name": request.form['name'], "user_id":  user_id})
+                      "(s_name, user_id) "
+                      "VALUES (%(s_name)s, %(user_id)s)")
+    cursor.execute(create_student, {
+                   "s_name": request.form['name'], "user_id":  user_id})
     sid = cursor.lastrowid
     cnx.commit()
     cursor.close()
     resp = make_response(render_template('index.html'))
     resp.set_cookie('user_id', str(user_id))
-    resp.set_cookie('sid', str(sid))
-    resp.set_cookie('name', request.form['name'])
+    resp.set_cookie('s_id', str(sid))
     return resp
 
 
-@auth.route("/student/signin", methods=['POST'])
+@auth.route("/signin", methods=['POST'])
 def signin():
     # print(request.form)
     hashed_psw = hashlib.md5((request.form['psw'] + __AUTH_SALT__).encode())
@@ -54,16 +57,23 @@ def signin():
     r = cursor.fetchone()
     if not r:
         return "login info not correct"
-    print(r)
+    user_id = r[0]
     if r[-1] != hashed_psw.hexdigest():
         return "login info not correct"
     query = ("""SELECT * FROM student
             WHERE user_id = %(user_id)s""")
-    cursor.execute(query, {"user_id": r[0]}) 
-    r = cursor.fetchone()     
+    cursor.execute(query, {"user_id": r[0]})
+    r = cursor.fetchone()
     cursor.close()
     resp = make_response(render_template('index.html'))
     resp.set_cookie('user_id', str(user_id))
-    resp.set_cookie('sid', str(r[0]))
-    resp.set_cookie('name', r[1])
+    resp.set_cookie('s_id', str(r[0]))
+    return resp
+
+
+@auth.route("/signout")
+def signout():
+    resp = make_response(render_template('index.html'))
+    resp.set_cookie('user_id', expires=0)
+    resp.set_cookie('s_id', expires=0)
     return resp

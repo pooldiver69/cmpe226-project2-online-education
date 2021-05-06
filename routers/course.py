@@ -1,9 +1,10 @@
-from flask import Blueprint, request, render_template, make_response
-from . import cnx
+from flask import Blueprint, request, render_template, make_response, redirect
+from . import cnx, auth_checker
 import hashlib
 import itertools
-
+import datetime
 course = Blueprint('course', __name__, url_prefix='/course')
+
 
 @course.route('')
 def list_course():
@@ -14,19 +15,57 @@ def list_course():
             """)
     cursor.execute(query)
     r = cursor.fetchall()
-    courses = [{**x, "c_url": "http://127.0.0.1:5000/course/" + str(x["c_id"])} for x in r]
+    courses = [
+        {**x, "c_url": "http://127.0.0.1:5000/course/" + str(x["c_id"])} for x in r]
     cursor.close()
     return render_template('course_list.html', courses=courses)
+
 
 @course.route('/<c_id>', methods=['GET'])
 def get_single_course(c_id):
     cursor = cnx.cursor(dictionary=True)
     query = ("""SELECT *
-            FROM content 
-            WHERE c_id = %(c_id)s
+            FROM content
+            WHERE c_id = %(c_id)s 
             """)
     cursor.execute(query, {"c_id": c_id})
     r = cursor.fetchall()
-    contents = [{**x, "content_url": "http://127.0.0.1:5000/content?c_id=" + str(x["c_id"]) + '&episode_number=' + str(x['episode_number'])} for x in r]
-    cursor.close() 
-    return render_template('course.html', contents=contents)
+    contents = [{**x, "content_url": "http://127.0.0.1:5000/content?c_id=" +
+                 str(x["c_id"]) + '&episode_number=' + str(x['episode_number'])} for x in r]
+    s_id = request.cookies.get("s_id")
+    purchase_url = ""
+    if s_id:
+        query = ("""SELECT *
+                FROM purchase
+                WHERE c_id = %(c_id)s AND s_id = %(s_id)s
+                """)
+        cursor.execute(query, {"c_id": c_id, "s_id": s_id})
+        r = cursor.fetchone()
+        if not r:
+            purchase_url = "http://127.0.0.1:5000/course/purchase/" + c_id
+    print(purchase_url)
+    cursor.close()
+    return render_template('course.html', contents=contents, purchase_url=purchase_url)
+
+
+@course.route('/purchase/<c_id>', methods=['GET'])
+def purchase_single_course(c_id):
+    s_id = request.cookies.get("s_id")
+    if not auth_checker(request):
+        return redirect('/auth')
+    cursor = cnx.cursor(dictionary=True)
+    query = ("""SELECT *
+            FROM course AS C 
+            WHERE c_id = %(c_id)s
+            """)
+    cursor.execute(query, {"c_id": c_id})
+    course = cursor.fetchone()
+    print(course)
+    purchase = ("INSERT INTO purchase "
+                "(c_id, s_id, price, purchsed_time) "
+                "VALUES (%(c_id)s, %(s_id)s,%(price)s, %(purchsed_time)s)")
+    cursor.execute(purchase, {"c_id": c_id, "s_id": s_id,
+                   "price": course['price'], "purchsed_time": datetime.datetime.utcnow()})
+    cnx.commit()
+    cursor.close()
+    return redirect('/course/' + c_id)
