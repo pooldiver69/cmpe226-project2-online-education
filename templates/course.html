@@ -148,17 +148,18 @@
   </div>
 
   <div class="navbar">
-    <a href="http://127.0.0.1:5000" class="active">Home</a>
-    <a href="http://127.0.0.1:5000/course">Course</a>
+    <a href="http://127.0.0.1:5000">Home</a>
+    <a href="http://127.0.0.1:5000/course" class="active">Course</a>
 
     <a id="signinbtn" href="http://127.0.0.1:5000/auth" class="right">Sign In</a>
     <a id="signoutbtn" href="http://127.0.0.1:5000/auth/signout" class="right">Sign Out</a>
-    <a id="instructorbtn" href="#" class="right">Instructor Portal</a>
-    <a id="studentbtn" href="#" class="right">Student Portal</a>
+    <a id="instructorbtn" href="http://127.0.0.1:5000/instructor_portal" class="right">Instructor Portal</a>
+    <a id="studentbtn" href="http://127.0.0.1:5000/student_portal" class="right">Student Portal</a>
   </div>
 
   <div class="row">
     <div class="main">
+      <h1>Content List</h1>
       {% for content in contents: %}
       <div>
         <a href={{ content['content_url'] }}>

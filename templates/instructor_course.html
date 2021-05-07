@@ -16,6 +16,21 @@
       margin: 0;
     }
 
+    button {
+      background-color: #04AA6D;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      opacity: 0.9;
+    }
+
+    button:hover {
+      opacity: 1;
+    }
+
     /* Header/logo Title */
     .header {
       padding: 80px;
@@ -144,13 +159,28 @@
 
   <div class="row">
     <div class="main">
-      <h2>{{ content['title'] }}</h2>
-      <p>{{ content['con_description'] }}</p>
-      <br>
-      <video width="1280" height="720" controls>
-        <source src={{ url_for('static', filename=content['stored_loc']) }} type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+      <h1>Update Course</h1>
+      <form action="http://127.0.0.1:5000/instructor_portal/create" method='POST'>
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value={{ course['c_name'] }} required><br>
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description" value={{ course['c_description'] }} required><br>
+        <label for="subject">Subject:</label><br>
+        <input type="text" id="subject" name="subject" value={{ course['subject'] }} required><br>
+        <label for="price">Price:</label><br>
+        <input type="number" min="0" id="price" name="price" value={{ course['price'] }} required><br><br>
+        <input type="submit" value="Submit">
+      </form> 
+      <h1>Content List</h1>
+      {% for content in contents: %}
+      <div>
+        <a href={{ content['content_url'] }}>
+          <h2>{{ content['title'] }}</h2>
+        </a>
+        <p>{{ content['con_description'] }}</p>
+        <br>
+      </div>
+      {% endfor %}
     </div>
   </div>
 

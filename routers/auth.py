@@ -62,12 +62,20 @@ def signin():
         return "login info not correct"
     query = ("""SELECT * FROM student
             WHERE user_id = %(user_id)s""")
-    cursor.execute(query, {"user_id": r[0]})
+    cursor.execute(query, {"user_id": user_id})
     r = cursor.fetchone()
-    cursor.close()
     resp = make_response(render_template('index.html'))
     resp.set_cookie('user_id', str(user_id))
     resp.set_cookie('s_id', str(r[0]))
+
+    # set i_id 
+    query = ("""SELECT * FROM instructor
+            WHERE user_id = %(user_id)s""")
+    cursor.execute(query, {"user_id": user_id})
+    r = cursor.fetchone()
+    if r:
+        resp.set_cookie('i_id', str(r[0]))
+    cursor.close()
     return resp
 
 
@@ -76,4 +84,5 @@ def signout():
     resp = make_response(render_template('index.html'))
     resp.set_cookie('user_id', expires=0)
     resp.set_cookie('s_id', expires=0)
+    resp.set_cookie('i_id', expires=0)
     return resp

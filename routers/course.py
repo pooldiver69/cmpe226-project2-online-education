@@ -23,7 +23,18 @@ def list_course():
 
 @course.route('/<c_id>', methods=['GET'])
 def get_single_course(c_id):
+    i_id = request.cookies.get("i_id")
     cursor = cnx.cursor(dictionary=True)
+
+    # query if i_id teach this course
+    query = ("""SELECT *
+            FROM course
+            WHERE author_id = %(i_id)s and c_id = %(c_id)s 
+            """)
+    cursor.execute(query, {"i_id": i_id, "c_id": c_id})
+    course = cursor.fetchone()
+
+    #query content info
     query = ("""SELECT *
             FROM content
             WHERE c_id = %(c_id)s 
@@ -34,7 +45,9 @@ def get_single_course(c_id):
                  str(x["c_id"]) + '&episode_number=' + str(x['episode_number'])} for x in r]
     s_id = request.cookies.get("s_id")
     purchase_url = ""
-    if s_id:
+
+    # check purchase only not teaching this course and valid student
+    if s_id and not course:
         query = ("""SELECT *
                 FROM purchase
                 WHERE c_id = %(c_id)s AND s_id = %(s_id)s
@@ -43,7 +56,6 @@ def get_single_course(c_id):
         r = cursor.fetchone()
         if not r:
             purchase_url = "http://127.0.0.1:5000/course/purchase/" + c_id
-    print(purchase_url)
     cursor.close()
     return render_template('course.html', contents=contents, purchase_url=purchase_url)
 
@@ -60,7 +72,6 @@ def purchase_single_course(c_id):
             """)
     cursor.execute(query, {"c_id": c_id})
     course = cursor.fetchone()
-    print(course)
     purchase = ("INSERT INTO purchase "
                 "(c_id, s_id, price, purchsed_time) "
                 "VALUES (%(c_id)s, %(s_id)s,%(price)s, %(purchsed_time)s)")

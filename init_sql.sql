@@ -66,13 +66,17 @@ create table purchase
         foreign key (c_id) references course(c_id) 
     );
 
-insert into auth values (1, "fake_instructor1@sjsu.edu", "1e4938be29e9cd78075cdaa75decc31a");
-insert into auth values (2, "fake_instructor2@sjsu.edu", "1e4938be29e9cd78075cdaa75decc31a");
-insert into auth values (3, "fake_instructor3@sjsu.edu", "1e4938be29e9cd78075cdaa75decc31a");
+insert into auth values (1, "fake_instructor1@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
+insert into auth values (2, "fake_instructor2@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
+insert into auth values (3, "fake_instructor3@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
 
 insert into instructor values (1, "fake instructor 1", 1);
 insert into instructor values (2, "fake instructor 2", 2);
 insert into instructor values (3, "fake instructor 3", 3);
+
+insert into student values (1, "fake instructor 1", 1);
+insert into student values (2, "fake instructor 2", 2);
+insert into student values (3, "fake instructor 3", 3);
 
 insert into course values (1, "Python Programming", "Mock up course", "Programming", 0, 1);
 insert into course values (2, "SQL", "Mock up course", "Data Structure", 9.99, 2);
