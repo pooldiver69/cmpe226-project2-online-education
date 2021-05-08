@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Online Education</title>
+  <title>Content</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -133,46 +133,37 @@
   </div>
 
   <div class="navbar">
-    <a href="http://127.0.0.1:5000" class="active">Home</a>
-    <a href="http://127.0.0.1:5000/course">Course</a>
+    <a href="http://127.0.0.1:5000">Home</a>
+    <a href="http://127.0.0.1:5000/course" class="active">Course</a>
 
     <a id="signinbtn" href="http://127.0.0.1:5000/auth" class="right">Sign In</a>
     <a id="signoutbtn" href="http://127.0.0.1:5000/auth/signout" class="right">Sign Out</a>
     <a id="instructorbtn" href="http://127.0.0.1:5000/instructor_portal" class="right">Instructor Portal</a>
-    <a id="studentbtn" href="http://127.0.0.1:5000/student_portal" class="right" >Student Portal</a>
+    <a id="studentbtn" href="http://127.0.0.1:5000/student_portal" class="right">Student Portal</a>
   </div>
 
   <div class="row">
-  <!-- <div class="side">
-    <h2>About Me</h2>
-    <h5>Photo of me:</h5>
-    <div class="fakeimg" style="height:200px;">Image</div>
-    <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-    <h3>More Text</h3>
-    <p>Lorem ipsum dolor sit ame.</p>
-    <div class="fakeimg" style="height:60px;">Image</div><br>
-    <div class="fakeimg" style="height:60px;">Image</div><br>
-    <div class="fakeimg" style="height:60px;">Image</div>
-  </div> -->
-  <!-- <div class="main">
-    <h2>TITLE HEADING</h2>
-    <h5>Title description, Dec 7, 2017</h5>
-    <div class="fakeimg" style="height:200px;">Image</div>
-    <p>Some text..</p>
-    <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
-    <br>
-    <h2>TITLE HEADING</h2>
-    <h5>Title description, Sep 2, 2017</h5>
-    <div class="fakeimg" style="height:200px;">Image</div>
-    <p>Some text..</p>
-    <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
-  </div> -->
-  <div class="main">
-    {% for mesg in get_flashed_messages() %}
-    <p style="color: red;">{{ mesg }}</p>
-    {% endfor %}
+    <div class="main">
+      <h1>Edit your content</h1>
+      <form action="http://127.0.0.1:5000/instructor_portal/update/content?c_id={{content['c_id']}}&episode_number={{content['episode_number']}}" method='POST'>
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value={{ content['title'] }} required><br>
+        <label for="con_description">Description:</label><br>
+        <textarea type="text" id="con_description" name="con_description" required rows="4" cols="50">{{ content['con_description'] }}</textarea><br>
+        <input type="submit" value="Submit">
+      </form> 
+      <h1>Upload You Video</h1>
+      <form method=post action="http://127.0.0.1:5000/instructor_portal/upload/content?c_id={{content['c_id']}}&episode_number={{content['episode_number']}}" enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+      </form>
+      <h1>Preview your video</h1>
+      <video width="1280" height="720" controls>
+        <source src={{ url_for('static', filename=content['stored_loc']) }} type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
   </div>
-</div>
 
   <div class="footer">
     <p>© Provided by SJSU CMPE 226 Class Project.</p>

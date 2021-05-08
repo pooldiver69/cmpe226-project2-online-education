@@ -59,7 +59,7 @@ create table purchase
 	(
         c_id MEDIUMINT NOT NULL, 
         s_id MEDIUMINT NOT NULL, 
-        price FLOAT(10) NOT NULL,
+        p_price FLOAT(10) NOT NULL,
         purchsed_time TIMESTAMP NOT NULL,
         primary key (c_id, s_id),
         foreign key (s_id) references student(s_id),

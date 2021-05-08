@@ -152,6 +152,7 @@
         </a>
         <h4>Instructor: {{ courses[row_index]['i_name'] }}</h4>
         <h4>Subject: {{ courses[row_index]['subject'] }}</h4>
+        <h4>Price: ${{ courses[row_index]['price'] }}</h4>
         <p>{{ courses[row_index]['c_description'] }}</p>
         <br>
       </div>
@@ -164,7 +165,7 @@
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name" placeholder="course name" required><br>
         <label for="description">Description:</label><br>
-        <input type="text" id="description" name="description" placeholder="course description" required><br>
+        <textarea type="text" id="description" name="description" required rows="4" cols="50"></textarea><br>
         <label for="subject">Subject:</label><br>
         <input type="text" id="subject" name="subject" placeholder="course subject" required><br>
         <label for="price">Price:</label><br>

@@ -5,6 +5,7 @@ from routers.content import content
 from routers.instructor import instructor_portal
 from routers.student import student_portal
 app = Flask(__name__, static_folder='static')
+app.secret_key = 'cmpe226'
 
 app.register_blueprint(auth)
 app.register_blueprint(course)

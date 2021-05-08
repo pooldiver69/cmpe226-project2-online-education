@@ -160,11 +160,11 @@
   <div class="row">
     <div class="main">
       <h1>Update Course</h1>
-      <form action="http://127.0.0.1:5000/instructor_portal/create" method='POST'>
+      <form action="http://127.0.0.1:5000/instructor_portal/update/course/{{course['c_id']}}" method='POST'>
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" value={{ course['c_name'] }} required><br>
+        <input type="text" id="name" name="c_name" value={{ course['c_name'] }} required><br>
         <label for="description">Description:</label><br>
-        <input type="text" id="description" name="description" value={{ course['c_description'] }} required><br>
+        <textarea type="text" id="description" name="c_description" required rows="4" cols="50">{{ course['c_description'] }}</textarea><br>
         <label for="subject">Subject:</label><br>
         <input type="text" id="subject" name="subject" value={{ course['subject'] }} required><br>
         <label for="price">Price:</label><br>
@@ -181,6 +181,15 @@
         <br>
       </div>
       {% endfor %}
+      <h1>Add A new Content</h1>
+      <form action="http://127.0.0.1:5000/instructor_portal/create/content" method='POST'>
+        <label for="title">Name:</label><br>
+        <input type="text" id="title" name="title" placeholder="content title" required><br>
+        <label for="con_description">Description:</label><br>
+        <textarea type="text" id="con_description" name="con_description" required rows="4" cols="50"></textarea><br>
+        <input type=text" id="c_id" name="c_id" value={{course['c_id']}} hidden required><br>
+        <input type="submit" value="Submit">
+      </form> 
     </div>
   </div>
 

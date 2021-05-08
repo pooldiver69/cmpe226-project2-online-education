@@ -73,10 +73,10 @@ def purchase_single_course(c_id):
     cursor.execute(query, {"c_id": c_id})
     course = cursor.fetchone()
     purchase = ("INSERT INTO purchase "
-                "(c_id, s_id, price, purchsed_time) "
-                "VALUES (%(c_id)s, %(s_id)s,%(price)s, %(purchsed_time)s)")
+                "(c_id, s_id, p_price, purchsed_time) "
+                "VALUES (%(c_id)s, %(s_id)s,%(p_price)s, %(purchsed_time)s)")
     cursor.execute(purchase, {"c_id": c_id, "s_id": s_id,
-                   "price": course['price'], "purchsed_time": datetime.datetime.utcnow()})
+                   "p_price": course['price'], "purchsed_time": datetime.datetime.utcnow()})
     cnx.commit()
     cursor.close()
     return redirect('/course/' + c_id)
