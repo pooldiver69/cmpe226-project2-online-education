@@ -26,3 +26,53 @@ def list_purchased_course():
         {**x, "c_url": "http://127.0.0.1:5000/course/" + str(x["c_id"]), "purchsed_time": x['purchsed_time'].strftime('%m/%d/%Y')} for x in r]
     cursor.close()
     return render_template('student_portal.html', courses=courses)
+
+@student_portal.route('/review', methods=['POST'])
+def post_review():
+    s_id = request.cookies.get('s_id')
+    if not s_id:
+        flash('You have no access to this resource')
+        return redirect("/")
+    cursor = cnx.cursor(dictionary=True)
+    query = ("""SELECT *
+            FROM purchase
+            WHERE s_id = %(s_id)s and c_id = %(c_id)s  
+            """)
+    cursor.execute(query, {"s_id": s_id, "c_id": request.form['c_id']})
+    course = cursor.fetchone()
+    if not course:
+        flash("you don't have access to this access")
+        return redirect('/course/' + request.form['c_id'])
+    create_review = ("INSERT INTO review "
+                "(c_id, s_id, star, r_message, created_time) "
+                "VALUES (%(c_id)s, %(s_id)s, %(star)s, %(r_message)s, %(created_time)s)")
+    cursor.execute(create_review, {"c_id": request.form['c_id'], "s_id": s_id, "star": request.form['star'],
+                    "r_message": request.form['r_message'], "created_time": datetime.datetime.utcnow()})
+    cnx.commit()
+    cursor.close()
+    return redirect('/course/' + request.form['c_id'])
+
+@student_portal.route('/question', methods=['POST'])
+def post_question():
+    s_id = request.cookies.get('s_id')
+    if not s_id:
+        flash('You have no access to this resource')
+        return redirect("/")
+    cursor = cnx.cursor(dictionary=True)
+    query = ("""SELECT *
+            FROM purchase
+            WHERE s_id = %(s_id)s and c_id = %(c_id)s  
+            """)
+    cursor.execute(query, {"s_id": s_id, "c_id": request.form['c_id']})
+    course = cursor.fetchone()
+    if not course:
+        flash("you don't have access to this access")
+        return redirect('/course/' + request.form['c_id'])
+    create_review = ("INSERT INTO question "
+                "(c_id, s_id, q_message, q_created_time) "
+                "VALUES (%(c_id)s, %(s_id)s, %(q_message)s, %(q_created_time)s)")
+    cursor.execute(create_review, {"c_id": request.form['c_id'], "s_id": s_id,
+                    "q_message": request.form['q_message'], "q_created_time": datetime.datetime.utcnow()})
+    cnx.commit()
+    cursor.close()
+    return redirect('/course/' + request.form['c_id'])
