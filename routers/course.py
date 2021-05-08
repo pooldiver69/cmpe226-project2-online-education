@@ -43,9 +43,28 @@ def get_single_course(c_id):
     r = cursor.fetchall()
     contents = [{**x, "content_url": "http://127.0.0.1:5000/content?c_id=" +
                  str(x["c_id"]) + '&episode_number=' + str(x['episode_number'])} for x in r]
+
+    # fetch review
+    query = ("""SELECT *
+            FROM review AS R 
+            JOIN student AS S ON S.s_id = R.s_id
+            WHERE c_id = %(c_id)s 
+            """)
+    cursor.execute(query, {"c_id": c_id})
+    reviews = cursor.fetchall()
+    reviews = [
+        {**x, "created_time": x['created_time'].strftime('%m/%d/%Y')} for x in reviews]
+    # fetch question
+    query = ("""SELECT *
+            FROM question AS Q
+            JOIN student AS S ON S.s_id = Q.s_id
+            WHERE c_id = %(c_id)s 
+            """)
+    cursor.execute(query, {"c_id": c_id})
+    questions = cursor.fetchall()
+
     s_id = request.cookies.get("s_id")
     purchase_url = ""
-
     # check purchase only not teaching this course and valid student
     if s_id and not course:
         query = ("""SELECT *
@@ -57,7 +76,8 @@ def get_single_course(c_id):
         if not r:
             purchase_url = "http://127.0.0.1:5000/course/purchase/" + c_id
     cursor.close()
-    return render_template('course.html', contents=contents, purchase_url=purchase_url)
+
+    return render_template('course.html', contents=contents, reviews=reviews, questions=questions, purchase_url=purchase_url, c_id=c_id)
 
 
 @course.route('/purchase/<c_id>', methods=['GET'])
