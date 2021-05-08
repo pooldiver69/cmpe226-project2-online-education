@@ -92,3 +92,83 @@ insert into content values (3, 2, "SQL 3", "video1.mp4","Mock up content");
 
 insert into content values (1, 3, "Data Engineering 1", "video1.mp4", "Mock up content");
 insert into content values (2, 3, "Data Engineering 2", "video2.mp4", "Mock up content");
+
+
+
+
+create view purchase_history_view AS
+SELECT c.c_id, c.c_name, c.subject, c.author_id, p.purchsed_time, p.p_price
+FROM course AS c, purchase AS p
+WHERE c.c_id = p.c_id;
+
+
+create view course_view AS
+SELECT c_name, c_description, subject
+FROM course;
+
+create view course_detail AS
+SELECT c.c_id, c.c_name, k.title
+FROM course AS c, content AS k
+WHERE c.c_id = k.c_id;
+
+
+
+
+DELIMITER //
+create procedure FreeCourse(IN courseID INT, OUT onSale VARCHAR(20))
+BEGIN
+   DECLARE currPrice FLOAT(10);
+
+   select price into currPrice
+   from course
+   where c_id = courseID;
+
+   IF currPrice = 0 THEN
+       SET onSale = 'YES';
+   ELSE
+       SET onSale = 'NO';
+   END IF;
+END;
+//
+DELIMITER ;
+
+
+call FreeCourse(1, @t);
+call FreeCourse(2, @z);
+call FreeCourse(3, @s);
+Select @t;
+Select @z;
+Select @s;
+
+
+
+DELIMITER //
+create procedure addEpisode(IN lastEPISODE_ID INT, IN course_id INT, IN numberUpload INT)
+BEGIN
+   DECLARE EPISODE_ID INT;
+   DECLARE inStr VARCHAR(20);
+   DECLARE MAX_EPISODE INT;
+   SET EPISODE_ID = lastEPISODE_ID + 1;
+   SET inStr = '';
+   SET MAX_EPISODE = lastEPISODE_ID + numberUpload;
+   WHILE EPISODE_ID <= MAX_EPISODE DO
+       IF course_id = 2 THEN
+           SET inStr = CONCAT("SQL ",EPISODE_ID);
+           insert into content values (EPISODE_ID, course_id, inStr, "video1.mp4","Mock up content");
+       END IF;
+       IF course_id = 1 THEN
+           SET inStr = CONCAT("Python ",EPISODE_ID);
+           insert into content values (EPISODE_ID, course_id, inStr, "video1.mp4","Mock up content");
+       END IF;
+       IF course_id = 3 THEN
+           SET inStr = CONCAT("Data Engineering ",EPISODE_ID);
+           insert into content values (EPISODE_ID, course_id, inStr, "video2.mp4","Mock up content");
+       END IF;
+       SET EPISODE_ID = EPISODE_ID + 1;
+   END WHILE;
+END;
+//
+DELIMITER //
+
+call addEpisode(3, 2, 4);
+call addEpisode(2, 3, 1);
