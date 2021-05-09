@@ -148,7 +148,7 @@
       <h1>Edit your content</h1>
       <form action="http://127.0.0.1:5000/instructor_portal/update/content?c_id={{content['c_id']}}&episode_number={{content['episode_number']}}" method='POST'>
         <label for="title">Title:</label><br>
-        <input type="text" id="title" name="title" value={{ content['title'] }} required><br>
+        <input type="text" id="title" name="title" value="{{ content['title'] }}" required><br>
         <label for="con_description">Description:</label><br>
         <textarea type="text" id="con_description" name="con_description" required rows="4" cols="50">{{ content['con_description'] }}</textarea><br>
         <input type="submit" value="Submit">

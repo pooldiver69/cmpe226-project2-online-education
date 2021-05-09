@@ -166,11 +166,11 @@
       <h1>Update Course</h1>
       <form action="http://127.0.0.1:5000/instructor_portal/update/course/{{course['c_id']}}" method='POST'>
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="c_name" value={{ course['c_name'] }} required><br>
+        <input type="text" id="name" name="c_name" value="{{ course['c_name'] }}" required><br>
         <label for="description">Description:</label><br>
         <textarea type="text" id="description" name="c_description" required rows="4" cols="50">{{ course['c_description'] }}</textarea><br>
         <label for="subject">Subject:</label><br>
-        <input type="text" id="subject" name="subject" value={{ course['subject'] }} required><br>
+        <input type="text" id="subject" name="subject" value="{{ course['subject'] }}" required><br>
         <label for="price">Price:</label><br>
         <input type="number" min="0" id="price" name="price" value={{ course['price'] }} required><br><br>
         <input type="submit" value="Submit">
