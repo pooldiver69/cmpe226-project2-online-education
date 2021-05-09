@@ -39,7 +39,7 @@ def create_course():
     create_course = ("INSERT INTO course "
                 "(c_name, c_description, subject, price, author_id) "
                 "VALUES (%(c_name)s, %(c_description)s,%(subject)s, %(price)s, %(author_id)s)")
-    cursor.execute(create_course, {"c_name": request.form['description'], "c_description": request.form['description'], "subject": request.form['subject'],
+    cursor.execute(create_course, {"c_name": request.form['name'], "c_description": request.form['description'], "subject": request.form['subject'],
                    "price": request.form['price'], "author_id": i_id})
     cnx.commit()
     cursor.close()
@@ -269,7 +269,7 @@ def create_content():
                 "VALUES (%(c_id)s, %(title)s, %(stored_loc)s, %(con_description)s)")
     cursor.execute(create_content, {"c_id": request.form['c_id'], "title": request.form['title'],
                     "stored_loc": '', "con_description": request.form['con_description']})
-
+    episode_number = cursor.lastrowid
 
 
     if {'title': request.form['title']} in titles:
@@ -279,14 +279,13 @@ def create_content():
         flash("content title already exists")
         return redirect("/instructor_portal/course/" + request.form['c_id'])
     else:
-         commit = "COMMIT"
-         cursor.execute(commit)
+        commit = "COMMIT"
+        cursor.execute(commit)
 
-    episode_number = cursor.lastrowid
-    cnx.commit()
-    cursor.close()
+        cnx.commit()
+        cursor.close()
 
-    return redirect('/instructor_portal/content?c_id=' + request.form['c_id'] +"&episode_number=" + str(episode_number))
+        return redirect('/instructor_portal/content?c_id=' + request.form['c_id'] +"&episode_number=" + str(episode_number))
 
 @instructor_portal.route('/answer', methods=['POST'])
 def answer_question():

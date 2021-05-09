@@ -145,9 +145,10 @@ WHERE c.c_id = p.c_id AND i.i_id = c.author_id;
 
 
 create view course_view AS
-SELECT c_name AS courseName, c_description AS Description, subject AS subj, c_id,
-author_id AS InstructorName, price AS coursePrice
-FROM course;
+SELECT course.c_name AS courseName, course.c_description AS Description, course.subject AS subj, course.c_id,
+instructor.i_name AS InstructorName, course.price AS coursePrice
+FROM course, instructor
+WHERE course.author_id = instructor.i_id;
 
 select * from course_view;
 
