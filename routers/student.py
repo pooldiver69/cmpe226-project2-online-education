@@ -14,10 +14,8 @@ def list_purchased_course():
         return redirect("/")
     cursor = cnx.cursor(dictionary=True)
     query = ("""SELECT *
-            FROM purchase AS P 
-            JOIN course AS C ON C.c_id = P.c_id 
-            JOIN instructor AS I ON C.author_id = I.i_id
-            WHERE P.s_id = %(s_id)s 
+            FROM purchase_history_view AS P 
+            WHERE P.stu_id = %(s_id)s 
             """)
     cursor.execute(query, {"s_id": s_id})
     r = cursor.fetchall()
