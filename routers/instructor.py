@@ -28,6 +28,7 @@ def list_my_course():
     cursor.close()
     return render_template('instructor_portal.html', courses=courses)
 
+
 @instructor_portal.route('/create', methods=['POST'])
 def create_course():
     i_id = request.cookies.get("i_id")
@@ -82,6 +83,7 @@ def get_single_course(c_id):
     print(unsolved_questions)
     cursor.close()
     return render_template('instructor_course.html', contents=contents, course=course, unsolved_questions=unsolved_questions)
+
 
 @instructor_portal.route('/update/course/<c_id>', methods=['POST'])
 def update_single_course(c_id):
@@ -147,6 +149,7 @@ def get_signle_content():
     cursor.close()
     return render_template('instructor_content.html', content=content)
 
+
 @instructor_portal.route('/update/content', methods=['POST'])
 def update_single_content():
     c_id = request.args.get("c_id")
@@ -184,11 +187,15 @@ def update_single_content():
     cursor.close()
     return redirect('/instructor_portal/content?c_id=' + c_id +"&episode_number=" + episode_number)
 
+
 ALLOWED_EXTENSIONS = ['mp4']
 __UPLOAD_FOLDER__ = '/static/'
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @instructor_portal.route('/upload/content', methods=['POST'])
 def upload_file():
@@ -233,22 +240,51 @@ def upload_file():
             cursor.close()
             return redirect('/instructor_portal/content?c_id=' + c_id +"&episode_number=" + episode_number)
 
+
 @instructor_portal.route('/create/content', methods=['POST'])
 def create_content():
+    print("12euhiduhiahudciuqd")
+
     i_id = request.cookies.get("i_id")
     if not i_id:
         flash('You have no access to this resource')
         return redirect('/')
 
     cursor = cnx.cursor(dictionary=True)
+
+    begin_transaction = ("START TRANSACTION")
+    cursor.execute(begin_transaction)
+
+    savePoint1 = ("SAVEPOINT point1")
+    cursor.execute(savePoint1)
+
+    title_query = ("""select title
+                    from content
+                    where c_id = %(c_id)s
+    """)
+    cursor.execute(title_query, {"c_id": request.form['c_id']})
+    titles = cursor.fetchall()
+
     create_content = ("INSERT INTO content "
                 "(c_id, title, stored_loc, con_description) "
                 "VALUES (%(c_id)s, %(title)s, %(stored_loc)s, %(con_description)s)")
     cursor.execute(create_content, {"c_id": request.form['c_id'], "title": request.form['title'],
                     "stored_loc": '', "con_description": request.form['con_description']})
-    episode_number = cursor.lastrowid          
+
+
+
+    if {'title': request.form['title']} in titles:
+         rollback = "ROLLBACK TO SAVEPOINT point1"
+         cursor.execute(rollback)
+         print("cannot add !!!!!!!!!!!")
+    else:
+         commit = "COMMIT"
+         cursor.execute(commit)
+
+    episode_number = cursor.lastrowid
     cnx.commit()
     cursor.close()
+
     return redirect('/instructor_portal/content?c_id=' + request.form['c_id'] +"&episode_number=" + str(episode_number))
 
 @instructor_portal.route('/answer', methods=['POST'])
@@ -273,3 +309,4 @@ def answer_question():
     cursor.execute(updates, {"q_id": request.form['q_id']})
     cursor.close()
     return redirect('/instructor_portal/course/' + request.form['c_id'])
+

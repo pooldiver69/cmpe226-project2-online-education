@@ -134,15 +134,23 @@ insert into content values (1, 3, "Data Engineering 1", "video1.mp4", "Mock up c
 insert into content values (2, 3, "Data Engineering 2", "video2.mp4", "Mock up content");
 
 
+insert into purchase values (1, 4, 0,' 2021-05-08 01:54:53');
+
+
 create view purchase_history_view AS
-SELECT c.c_id, c.c_name, c.subject, c.author_id, p.purchsed_time, p.p_price
-FROM course AS c, purchase AS p
-WHERE c.c_id = p.c_id;
+SELECT c.c_id, c.c_description AS c_des, c.c_name AS cname, c.subject AS sub,
+i.i_name AS instr_name, p.purchsed_time , p.p_price AS pri, p.s_id AS stu_id
+FROM course AS c, purchase AS p, instructor AS i
+WHERE c.c_id = p.c_id AND i.i_id = c.author_id;
 
 
 create view course_view AS
-SELECT c_name, c_description, subject
+SELECT c_name AS courseName, c_description AS Description, subject AS subj, c_id,
+author_id AS InstructorName, price AS coursePrice
 FROM course;
+
+select * from course_view;
+
 
 create view course_detail AS
 SELECT c.c_id, c.c_name, k.title
@@ -210,6 +218,4 @@ DELIMITER //
 
 call addEpisode(3, 2, 4);
 call addEpisode(2, 3, 1);
-                                                                
-insert into purchase values (1, 4, 0,' 2021-05-08 01:54:53');
 
