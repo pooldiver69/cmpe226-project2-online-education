@@ -66,11 +66,12 @@ def post_question():
     if not course:
         flash("you don't have access to this access")
         return redirect('/course/' + request.form['c_id'])
+        
     create_review = ("INSERT INTO question "
-                "(c_id, s_id, q_message, q_created_time) "
-                "VALUES (%(c_id)s, %(s_id)s, %(q_message)s, %(q_created_time)s)")
+                "(c_id, s_id, q_message, q_created_time, resolved) "
+                "VALUES (%(c_id)s, %(s_id)s, %(q_message)s, %(q_created_time)s, %(resolved)s)")
     cursor.execute(create_review, {"c_id": request.form['c_id'], "s_id": s_id,
-                    "q_message": request.form['q_message'], "q_created_time": datetime.datetime.utcnow()})
+                    "q_message": request.form['q_message'], "q_created_time": datetime.datetime.utcnow(), "resolved":  False})
     cnx.commit()
     cursor.close()
     return redirect('/course/' + request.form['c_id'])

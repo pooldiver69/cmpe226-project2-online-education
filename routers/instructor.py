@@ -59,7 +59,7 @@ def get_single_course(c_id):
             """)
     cursor.execute(query, {"i_id": i_id, "c_id": c_id})
     course = cursor.fetchone()
-    print(course)
+    # print(course)
     if not course:
         flash('You have no access to this resource')
         return redirect("/")
@@ -73,8 +73,16 @@ def get_single_course(c_id):
     contents = [{**x, "content_url": "http://127.0.0.1:5000/instructor_portal/content?c_id=" +
                  str(x["c_id"]) + '&episode_number=' + str(x['episode_number'])} for x in r]
 
+    query = ("""SELECT *
+            FROM question AS Q
+            JOIN student AS S ON Q.s_id = S.s_id 
+            WHERE c_id = %(c_id)s AND resolved = %(resolved)s
+            """)
+    cursor.execute(query, {"c_id" :c_id, "resolved": False})
+    unsolved_questions = cursor.fetchall()
+    print(unsolved_questions)
     cursor.close()
-    return render_template('instructor_course.html', contents=contents, course=course)
+    return render_template('instructor_course.html', contents=contents, course=course, unsolved_questions=unsolved_questions)
 
 
 @instructor_portal.route('/update/course/<c_id>', methods=['POST'])
@@ -277,8 +285,28 @@ def create_content():
     cnx.commit()
     cursor.close()
 
-
-
-
     return redirect('/instructor_portal/content?c_id=' + request.form['c_id'] +"&episode_number=" + str(episode_number))
+
+@instructor_portal.route('/answer', methods=['POST'])
+def answer_question():
+    i_id = request.cookies.get("i_id")
+    if not i_id:
+        flash('You have no access to this resource')
+        return redirect('/')
+
+    cursor = cnx.cursor(dictionary=True)
+    create_content = ("INSERT INTO answer "
+                "(q_id, i_id, a_message, a_created_time) "
+                "VALUES (%(q_id)s, %(i_id)s, %(a_message)s, %(a_created_time)s)")
+    cursor.execute(create_content, {"q_id": request.form['q_id'], "i_id": i_id,
+                    "a_message": request.form['a_message'], "a_created_time": datetime.datetime.utcnow()})
+    episode_number = cursor.lastrowid      
+    cnx.commit()
+    updates = ("""UPDATE question
+            SET resolved ='1'
+            WHERE q_id = %(q_id)s 
+            """)
+    cursor.execute(updates, {"q_id": request.form['q_id']})
+    cursor.close()
+    return redirect('/instructor_portal/course/' + request.form['c_id'])
 

@@ -56,12 +56,13 @@ def get_single_course(c_id):
     # fetch question
     query = ("""SELECT *
             FROM question AS Q
+            LEFT JOIN answer AS A ON Q.q_id = A.q_id
             JOIN student AS S ON S.s_id = Q.s_id
             WHERE c_id = %(c_id)s 
             """)
     cursor.execute(query, {"c_id": c_id})
     questions = cursor.fetchall()
-
+#     print(questions)
     s_id = request.cookies.get("s_id")
     purchase_url = ""
     # check purchase only not teaching this course and valid student

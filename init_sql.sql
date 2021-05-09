@@ -85,8 +85,21 @@ create table question
         s_id MEDIUMINT NOT NULL, 
         q_message VARCHAR(255) NOT NULL,
         q_created_time TIMESTAMP NOT NULL,
+        resolved BOOLEAN NOT NULL,
         primary key (q_id),
         foreign key (c_id) references course(c_id) 
+    );
+
+create table answer
+    (
+        q_id MEDIUMINT NOT NULL, 
+        i_id MEDIUMINT NOT NULL,
+        a_message VARCHAR(255) NOT NULL,
+        a_created_time TIMESTAMP NOT NULL,
+        primary key (q_id),
+        foreign key (q_id) references question(q_id) 
+            on delete cascade
+        
     );
 
 insert into auth values (1, "fake_instructor1@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
@@ -120,6 +133,7 @@ insert into content values (3, 2, "SQL 3", "video1.mp4","Mock up content");
 insert into content values (1, 3, "Data Engineering 1", "video1.mp4", "Mock up content");
 insert into content values (2, 3, "Data Engineering 2", "video2.mp4", "Mock up content");
 
+
 insert into purchase values (1, 4, 0,' 2021-05-08 01:54:53');
 
 
@@ -136,6 +150,7 @@ author_id AS InstructorName, price AS coursePrice
 FROM course;
 
 select * from course_view;
+
 
 create view course_detail AS
 SELECT c.c_id, c.c_name, k.title
@@ -203,3 +218,4 @@ DELIMITER //
 
 call addEpisode(3, 2, 4);
 call addEpisode(2, 3, 1);
+
