@@ -243,7 +243,6 @@ def upload_file():
 
 @instructor_portal.route('/create/content', methods=['POST'])
 def create_content():
-    print("12euhiduhiahudciuqd")
 
     i_id = request.cookies.get("i_id")
     if not i_id:
@@ -274,9 +273,11 @@ def create_content():
 
 
     if {'title': request.form['title']} in titles:
-         rollback = "ROLLBACK TO SAVEPOINT point1"
-         cursor.execute(rollback)
-         print("cannot add !!!!!!!!!!!")
+        rollback = "ROLLBACK TO SAVEPOINT point1"
+        cursor.execute(rollback)
+        #  print("cannot add !!!!!!!!!!!")
+        flash("content title already exists")
+        return redirect("/instructor_portal/course/" + request.form['c_id'])
     else:
          commit = "COMMIT"
          cursor.execute(commit)
@@ -295,18 +296,55 @@ def answer_question():
         return redirect('/')
 
     cursor = cnx.cursor(dictionary=True)
+    begin_transaction = ("START TRANSACTION")
+    cursor.execute(begin_transaction)
+
+    savePoint1 = ("SAVEPOINT point1")
+    cursor.execute(savePoint1)
+
     create_content = ("INSERT INTO answer "
                 "(q_id, i_id, a_message, a_created_time) "
                 "VALUES (%(q_id)s, %(i_id)s, %(a_message)s, %(a_created_time)s)")
     cursor.execute(create_content, {"q_id": request.form['q_id'], "i_id": i_id,
-                    "a_message": request.form['a_message'], "a_created_time": datetime.datetime.utcnow()})
-    episode_number = cursor.lastrowid      
-    cnx.commit()
+                    "a_message": request.form['a_message'], "a_created_time": datetime.datetime.utcnow()}) 
+
     updates = ("""UPDATE question
             SET resolved ='1'
             WHERE q_id = %(q_id)s 
             """)
     cursor.execute(updates, {"q_id": request.form['q_id']})
+
+    if not cursor.rowcount:
+        rollback = "ROLLBACK TO SAVEPOINT point1"
+        cursor.execute(rollback)
+        #  print("cannot add !!!!!!!!!!!")
+        flash("answer submit failed")
+    cnx.commit()
     cursor.close()
     return redirect('/instructor_portal/course/' + request.form['c_id'])
 
+@instructor_portal.route('/delete/content', methods=['POST'])
+def delete_content():
+    c_id = request.form["c_id"]
+    i_id = request.cookies.get("i_id")
+    s_id = request.cookies.get("s_id")
+    course = None
+    cursor = cnx.cursor(dictionary=True)
+    # query if i_id teach this course
+    if i_id:
+        query = ("""SELECT *
+                FROM course
+                WHERE author_id = %(i_id)s and c_id = %(c_id)s 
+                """)
+        cursor.execute(query, {"i_id": i_id, "c_id": c_id})
+        course = cursor.fetchone()
+    if not course:
+        flash("you have no access to this resource")
+        return redirect('/')
+
+    delete_content = ("DELETE FROM content "
+                "WHERE c_id = %(c_id)s AND episode_number = %(episode_number)s  ")
+    cursor.execute(delete_content, {"c_id": c_id, "episode_number": request.form['episode_number']})
+    cnx.commit()
+    cursor.close()
+    return redirect('/instructor_portal/course/' + c_id)

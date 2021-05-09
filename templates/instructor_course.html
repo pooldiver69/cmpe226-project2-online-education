@@ -159,6 +159,9 @@
 
   <div class="row">
     <div class="main">
+      {% for mesg in get_flashed_messages() %}
+      <p style="color: red;">{{ mesg }}</p>
+      {% endfor %}
       <h1>Update Course</h1>
       <form action="http://127.0.0.1:5000/instructor_portal/update/course/{{course['c_id']}}" method='POST'>
         <label for="name">Name:</label><br>
@@ -180,6 +183,11 @@
         <p>{{ content['con_description'] }}</p>
         <br>
       </div>
+      <form action="http://127.0.0.1:5000/instructor_portal/delete/content" method="post">
+        <input type="text" name="episode_number" id="episode_number" value={{content['episode_number']}} hidden required>
+        <input type="text" name="c_id" id="c_id" value={{content['c_id']}} hidden required>
+        <input type="submit" value="Delete This Content">
+      </form>
       {% endfor %}
 
       <h1>Unresolved Questions: </h1>
