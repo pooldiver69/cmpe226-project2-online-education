@@ -21,6 +21,25 @@ create table student
             auth(id) on delete cascade
     );
 
+create table badge
+	(
+        b_id MEDIUMINT NOT NULL AUTO_INCREMENT, 
+        b_name VARCHAR(50) NOT NULL,
+        b_description VARCHAR(255) NOT NULL,
+        primary key (b_id)
+    );
+
+create table earn
+	(
+        b_id MEDIUMINT NOT NULL, 
+        s_id MEDIUMINT NOT NULL, 
+        earned_time TIMESTAMP NOT NULL,
+        primary key (b_id, s_id),
+        foreign key (s_id) references student(s_id)
+            on delete cascade,
+        foreign key (b_id) references badge(b_id) 
+    );
+
 create table instructor
 	(
         i_id MEDIUMINT NOT NULL AUTO_INCREMENT, 
@@ -162,7 +181,7 @@ WHERE c.c_id = k.c_id;
 
 
 
-DELIMITER //
+DELIMITER $$
 create procedure FreeCourse(IN courseID INT, OUT onSale VARCHAR(20))
 BEGIN
    DECLARE currPrice FLOAT(10);
@@ -176,8 +195,7 @@ BEGIN
    ELSE
        SET onSale = 'NO';
    END IF;
-END;
-//
+END $$
 DELIMITER ;
 
 
@@ -190,7 +208,7 @@ Select @s;
 
 
 
-DELIMITER //
+DELIMITER $$
 create procedure addEpisode(IN lastEPISODE_ID INT, IN course_id INT, IN numberUpload INT)
 BEGIN
    DECLARE EPISODE_ID INT;
@@ -214,9 +232,8 @@ BEGIN
        END IF;
        SET EPISODE_ID = EPISODE_ID + 1;
    END WHILE;
-END;
-//
-DELIMITER //
+END $$
+DELIMITER ;
 
 call addEpisode(3, 2, 4);
 call addEpisode(2, 3, 1);
