@@ -148,13 +148,13 @@
       {% for row_index in range(courses |count) %}
       <div>
         <a href={{ courses[row_index]['c_url'] }}>
-          <h2>{{ courses[row_index]['c_name'] }}</h2>
+          <h2>{{ courses[row_index]['cname'] }}</h2>
         </a>
-        <h4>Instructor: {{ courses[row_index]['i_name'] }}</h4>
-        <h4>Subject: {{ courses[row_index]['subject'] }}</h4>
-        <h4>Price: ${{ courses[row_index]['p_price'] }}</h4>
+        <h4>Instructor: {{ courses[row_index]['instr_name'] }}</h4>
+        <h4>Subject: {{ courses[row_index]['sub'] }}</h4>
+        <h4>Price: ${{ courses[row_index]['pri'] }}</h4>
         <h4>Purchased At: {{courses[row_index]['purchsed_time']}}</h4>
-        <p>{{ courses[row_index]['c_description'] }}</p>
+        <p>{{ courses[row_index]['c_des'] }}</p>
         <br>
       </div>
       {% endfor %}

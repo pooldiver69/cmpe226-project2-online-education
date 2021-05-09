@@ -10,8 +10,7 @@ course = Blueprint('course', __name__, url_prefix='/course')
 def list_course():
     cursor = cnx.cursor(dictionary=True)
     query = ("""SELECT *
-            FROM course AS C 
-            JOIN instructor AS I ON C.author_id = I.i_id
+            FROM course_view
             """)
     cursor.execute(query)
     r = cursor.fetchall()
