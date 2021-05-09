@@ -101,3 +101,18 @@ def purchase_single_course(c_id):
     cnx.commit()
     cursor.close()
     return redirect('/course/' + c_id)
+
+@course.route("/search")
+def search_coruse():
+    term = request.args.get("search")
+    cursor = cnx.cursor(dictionary=True)
+    query = ("""SELECT *
+            FROM course_view
+            WHERE courseName LIKE %(term)s
+            """)
+    cursor.execute(query, {"term": '%' + term + '%'})
+    r = cursor.fetchall()
+    courses = [
+        {**x, "c_url": "http://127.0.0.1:5000/course/" + str(x["c_id"])} for x in r]
+    cursor.close()
+    return render_template('course_list.html', courses=courses)
