@@ -1,3 +1,4 @@
+-- SJSU CMPE 226 Spring2021TEAM5
 drop database if exists cmpe226_project2_online_education;
 create database cmpe226_project2_online_education;
 use cmpe226_project2_online_education;

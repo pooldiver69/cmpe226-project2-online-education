@@ -1,3 +1,4 @@
+# SJSU CMPE 226 Spring2021TEAM5
 import mysql.connector
 from utils.auth_checker import auth_checker
 
