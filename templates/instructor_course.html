@@ -181,6 +181,25 @@
         <br>
       </div>
       {% endfor %}
+
+      <h1>Unresolved Questions: </h1>
+      {% for question in unsolved_questions: %}
+      <div>
+        <h4>By: {{ question['s_name'] }}</h4>
+        <h4>On: {{ question['q_created_time'] }}</h4>
+        <h4>Question:</h4>
+        <p>{{ question['q_message'] }}</p>
+        <br>
+        <form action="http://127.0.0.1:5000/instructor_portal/answer" method="post">
+          <input type="text" name="q_id" id="q_id" value={{question['q_id']}} hidden required>
+          <input type="text" name="c_id" id="c_id" value={{question['c_id']}} hidden required>
+          <label for="a_message">Answer:</label><br>
+          <textarea type="text" id="a_message" name="a_message" required rows="4" cols="50"></textarea><br><br>
+          <input type="submit" value="Submit">
+        </form>
+      </div>
+      {% endfor %}
+
       <h1>Add A new Content</h1>
       <form action="http://127.0.0.1:5000/instructor_portal/create/content" method='POST'>
         <label for="title">Name:</label><br>

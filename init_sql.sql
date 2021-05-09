@@ -85,8 +85,21 @@ create table question
         s_id MEDIUMINT NOT NULL, 
         q_message VARCHAR(255) NOT NULL,
         q_created_time TIMESTAMP NOT NULL,
+        resolved BOOLEAN NOT NULL,
         primary key (q_id),
         foreign key (c_id) references course(c_id) 
+    );
+
+create table answer
+    (
+        q_id MEDIUMINT NOT NULL, 
+        i_id MEDIUMINT NOT NULL,
+        a_message VARCHAR(255) NOT NULL,
+        a_created_time TIMESTAMP NOT NULL,
+        primary key (q_id),
+        foreign key (q_id) references question(q_id) 
+            on delete cascade
+        
     );
 
 insert into auth values (1, "fake_instructor1@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
