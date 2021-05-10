@@ -107,7 +107,8 @@ create table question
         q_created_time TIMESTAMP NOT NULL,
         resolved BOOLEAN NOT NULL,
         primary key (q_id),
-        foreign key (c_id) references course(c_id) 
+        foreign key (c_id) references course(c_id),
+        foreign key (s_id) references student(s_id)
     );
 
 create table answer
