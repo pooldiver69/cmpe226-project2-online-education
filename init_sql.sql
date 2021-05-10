@@ -117,9 +117,8 @@ create table answer
         a_message VARCHAR(255) NOT NULL,
         a_created_time TIMESTAMP NOT NULL,
         primary key (q_id),
-        foreign key (q_id) references question(q_id) 
-            on delete cascade
-        
+        foreign key (q_id) references question(q_id),
+        foreign key (q_id) references instructor(i_id)
     );
 
 insert into auth values (1, "fake_instructor1@sjsu.edu", "bd0dcd7fa592787af69927fc66cba2ec");
